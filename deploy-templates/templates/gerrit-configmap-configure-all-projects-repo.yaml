@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: script-configure-all-projects-repo
+  namespace: {{ .Release.Namespace }}
+  labels:
+  {{- include "gerrit-operator.metaLabels" . | nindent 4 }}
+data:
+  configure_all_project_repo.sh: |-
+    #!/bin/bash
+
+    function checkFastForwardGerrit() {
+      local fileName="$1"
+      local expressionToFind="$2"
+      local modifier="$3"
+      local configBlock="$4"
+      configBlock=$(sed -e 's,/,\\/,g; s/*/\\*/g; s/"/\\"/g; s/-/\\-/g' <<< ${configBlock})
+      local isInFile=$(cat "${fileName}" | grep -c "${expressionToFind}")
+
+      if [[ ((${isInFile} -eq 0) && (${modifier} -ne 0)) || ((${isInFile} -gt 0) && (${modifier} -eq 0)) ]] ; then
+        case ${modifier} in
+          0)
+            sed -i '/^\['"$configBlock"'\]/,/^\[/{/'"${expressionToFind}"'/d}' ${fileName}
+            isConfigChanged=true
+            ;;
+          1)
+            sed -i '/^\['"$configBlock"'\]/,/^\[/{s,mergeContent = true,'"$expressionToFind"',}' ${fileName}
+            isConfigChanged=true
+            ;;
+          2)
+            sed -i '/^\['"$configBlock"'\]/a\    '"${expressionToFind}"'' ${fileName}
+            isConfigChanged=true
+            ;;
+        esac
+      else
+        echo "Required configuration has been already applied"
+      fi
+    }
+
+
+    declare isConfigChanged=false
+    sleep 30
+
+    git clone https://$GERRIT_ADMIN_USERNAME:$GERRIT_ADMIN_PASSWORD@{{ template "gerrit.hostname" . }}/All-Projects && cd All-Projects
+    git config --global user.email "admin@example.com" && git config --global user.name "Admin"
+
+    checkFastForwardGerrit "project.config" "pushMerge = group Administrators" 0 "access \"refs/for/refs/*\""
+    checkFastForwardGerrit "project.config" "mergeContent = false" 1 "submit"
+    checkFastForwardGerrit "project.config" "action = fast forward only" 2 "submit"
+
+    if ${isConfigChanged}; then
+      git add . && git commit -a -m "Updated Gerrit config" && git push origin HEAD:refs/meta/config
+    fi

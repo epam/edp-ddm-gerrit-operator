@@ -1,0 +1,19 @@
+apiVersion: v2.edp.epam.com/v1alpha1
+kind: Gerrit
+metadata:
+  name: gerrit
+  labels:
+  {{- include "gerrit-operator.metaLabels" . | nindent 4 }}
+spec:
+  image: {{ template "imageRegistry" . -}} {{ .Values.gerrit.image.name }}
+  keycloakSpec:
+    enabled: {{ .Values.keycloakIntegration.enabled }}
+    realm: {{ template "keycloak.realm" . }}
+    url: {{ template "gerrit.url" . }}
+  type: Gerrit
+  sshPort: {{ .Values.gerrit.sshPort }}
+  version: {{ .Values.gerrit.image.version }}
+  volumes:
+    - capacity: {{ .Values.gerrit.storage.size }}
+      name: data
+      storage_class: {{ .Values.storageClass }}
