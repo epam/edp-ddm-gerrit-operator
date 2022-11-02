@@ -1,7 +1,8 @@
+{{- if not (lookup "batch/v1" "Job" .Release.Namespace "gerrit-configure-all-projects-repo") -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: gerrit-configure-all-projects-repo
+  name: gerrit-configure-all-projects-repo-patched
   namespace: {{ .Release.Namespace }}
   labels:
     app: {{ .Values.gerrit.name }}
@@ -18,7 +19,10 @@ spec:
           command:
             - sh
             - '-c'
-            - while ! nc -w 1 {{ template "gerrit.hostname" . }} 443 </dev/null; do echo waiting for gerrit ready; sleep 10; done;
+            - >-
+              set -x;
+              while [ $(curl -sw '%{http_code}' {{ template "admin-tools.gerritUrl" . }} -o /dev/null) -ne 302 ]; do
+              sleep 10; done;
       containers:
         - name: gerrit-configure-all-projects-repo-init
           image: {{ template "imageRegistry" . -}} bitnami/git
@@ -46,3 +50,4 @@ spec:
             defaultMode: 0755
       restartPolicy: Never
       serviceAccountName: {{ .Values.gerrit.serviceAccountName }}
+{{- end -}}

@@ -9,7 +9,7 @@ spec:
   keycloakSpec:
     enabled: {{ .Values.keycloakIntegration.enabled }}
     realm: {{ template "keycloak.realm" . }}
-    url: {{ template "gerrit.url" . }}
+    url: {{ template "admin-tools.gerritUrl" . }}
   type: Gerrit
   sshPort: {{ .Values.gerrit.sshPort }}
   version: {{ .Values.gerrit.image.version }}

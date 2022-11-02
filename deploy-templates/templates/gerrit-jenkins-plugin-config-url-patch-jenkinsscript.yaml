@@ -1,0 +1,9 @@
+apiVersion: v2.edp.epam.com/v1alpha1
+kind: JenkinsScript
+metadata:
+  name: gerrit-jenkins-plugin-config-url-patch
+  labels:
+  {{- include "gerrit-operator.metaLabels" . | nindent 4 }}
+spec:
+  ownerName: null
+  sourceConfigMapName: gerrit-jenkins-plugin-config-url-patch

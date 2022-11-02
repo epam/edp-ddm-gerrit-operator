@@ -41,7 +41,7 @@ data:
     declare isConfigChanged=false
     sleep 30
 
-    git clone https://$GERRIT_ADMIN_USERNAME:$GERRIT_ADMIN_PASSWORD@{{ template "gerrit.hostname" . }}/All-Projects && cd All-Projects
+    git clone https://$GERRIT_ADMIN_USERNAME:$GERRIT_ADMIN_PASSWORD@{{ template "admin-tools.hostname" . }}/{{ .Values.gerrit.basePath }}/All-Projects && cd All-Projects
     git config --global user.email "admin@example.com" && git config --global user.name "Admin"
 
     checkFastForwardGerrit "project.config" "pushMerge = group Administrators" 0 "access \"refs/for/refs/*\""
