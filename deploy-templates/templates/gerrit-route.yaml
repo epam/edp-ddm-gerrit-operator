@@ -8,10 +8,10 @@ metadata:
     {{- include "gerrit-operator.metaLabels" . | nindent 4 }}
   name: gerrit
 spec:
-  host: {{ template "gerrit.hostname" . }}
-  path: /
+  host: {{ template "admin-tools.hostname" . }}
+  path: /{{ .Values.gerrit.basePath }}
   port:
-    targetPort: 8080
+    targetPort: {{ .Values.gerrit.port }}
   tls:
     insecureEdgeTerminationPolicy: Redirect
     termination: edge

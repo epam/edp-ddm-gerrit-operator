@@ -57,18 +57,27 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 {{- end }}
 
+{{/*
+Define Gerrit URL
+*/}}
 {{- define "edp.hostnameSuffix" -}}
 {{- printf "%s-%s.%s" .Values.cdPipelineName .Values.cdPipelineStageName .Values.dnsWildcard }}
 {{- end }}
 
-{{- define "gerrit.hostname" -}}
-{{- $hostname := printf "%s-%s" "gerrit" .Values.edpProject }}
-{{- printf "%s-%s" $hostname (include "edp.hostnameSuffix" .) }}
+{{- define "admin-tools.hostname" -}}
+{{- printf "admin-tools-%s" (include "edp.hostnameSuffix" .) }}
 {{- end }}
 
-{{- define "gerrit.url" -}}
-{{- printf "%s%s" "https://" (include "gerrit.hostname" .) }}
+{{- define "admin-tools.gerritUrl" -}}
+{{- printf "%s%s/%s" "https://" (include "admin-tools.hostname" .) .Values.gerrit.basePath }}
 {{- end }}
+
+{{/*
+Define Keycloak URL
+*/}}
+{{- define "keycloak.url" -}}
+{{- printf "%s%s" "https://" .Values.keycloak.host }}
+{{- end -}}
 
 {{- define "keycloak.realm" -}}
 {{- printf "%s-%s" .Release.Namespace .Values.keycloakIntegration.realm }}
@@ -85,3 +94,31 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- define "admin-routes.whitelist.annotation" -}}
 haproxy.router.openshift.io/ip_whitelist: {{ (include "admin-routes.whitelist.cidr" . | default "0.0.0.0/0") | quote }}
 {{- end -}}
+
+{{- define "gerrit.keycloak-secret"}}
+{{- $secret := (lookup "v1" "Secret" .Release.Namespace .Values.keycloakIntegration.client.secretName) -}}
+{{- if $secret }}
+{{- $secret.data.clientSecret }}
+{{- else }}
+{{- uuidv4 | b64enc }}
+{{- end }}
+{{- end }}
+
+{{/*
+Redis
+*/}}
+{{- define "sentinel.host" -}}
+{{- if .Values.sentinel.host }}
+{{- .Values.sentinel.host }}
+{{- else -}}
+rfs-redis-sentinel.{{ .Values.namespace }}.svc
+{{- end }}
+{{- end }}
+
+{{- define "sentinel.port" -}}
+{{- if .Values.sentinel.port }}
+{{- .Values.sentinel.port }}
+{{- else -}}
+26379
+{{- end }}
+{{- end }}
