@@ -23,6 +23,6 @@ spec:
   secret: ''
   {{- end }}
   advancedProtocolMappers: false
-  webUrl: {{ template "admin-tools.gerritUrl" . }}
+  webUrl: {{ template "gerrit.url" . }}
   targetRealm: {{ template "keycloak.realm" . }}
 {{- end -}}

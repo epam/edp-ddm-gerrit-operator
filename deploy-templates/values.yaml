@@ -16,7 +16,6 @@ gerrit:
   sshPort: 30999
   port: 8080
   serviceAccountName: gerrit
-  basePath: gerrit
 
 keycloakIntegration:
   enabled: true
@@ -26,8 +25,6 @@ keycloakIntegration:
     secretName: gerrit-is-credentials
   realm: admin
 
-sentinel: {}
-
 dockerRegistry: docker-registry.openshift-image-registry.svc
 global:
   storageClass: ocs-storagecluster-ceph-rbd
@@ -36,7 +33,7 @@ global:
     administrators: []
     readers: []
 keycloak:
-  host: platform-keycloak:8080
+  host: keycloak.edp-epam.com
 image:
   version: 1.1.1-1
 dnsWildcard: mdtu-ddm.edp.epam.com

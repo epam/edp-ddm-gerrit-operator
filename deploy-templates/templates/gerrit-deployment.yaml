@@ -18,7 +18,7 @@ spec:
     metadata:
       annotations:
         backup.velero.io/backup-volumes: {{ .Values.gerrit.name }}-data
-        sidecar.istio.io/inject: "false"
+        sidecar.istio.io/inject: "false"  
       labels:
         app: {{ .Values.gerrit.name }}
     spec:
@@ -30,13 +30,13 @@ spec:
         - name: {{ .Values.gerrit.name }}
           image: {{ template "imageRegistry" . -}} {{ .Values.gerrit.image.name }}:{{ .Values.gerrit.image.version }}
           ports:
-            - containerPort: {{ .Values.gerrit.port }}
+            - containerPort: 8080
               protocol: TCP
           env:
             - name: HTTPD_LISTENURL
-              value: 'proxy-http://*:{{ .Values.gerrit.port }}/{{ .Values.gerrit.basePath }}'
+              value: 'proxy-https://*:8080'
             - name: WEBURL
-              value: {{ template "admin-tools.gerritUrl" . }}
+              value: {{ template "gerrit.url" . }}
             - name: GERRIT_INIT_ARGS
               value: '--install-plugin=delete-project --install-plugin=plugin-manager --install-plugin=commit-message-length-validator --install-plugin=download-commands
                         --install-plugin=hooks --install-plugin=reviewnotes --install-plugin=singleusergroup --install-plugin=replication'
@@ -66,8 +66,8 @@ spec:
               mountPath: /var/gerrit/review_site
           readinessProbe:
             httpGet:
-              path: /{{ .Values.gerrit.basePath }}
-              port: {{ .Values.gerrit.port }}
+              path: /
+              port: 8080
               scheme: HTTP
             initialDelaySeconds: 60
             timeoutSeconds: 10
