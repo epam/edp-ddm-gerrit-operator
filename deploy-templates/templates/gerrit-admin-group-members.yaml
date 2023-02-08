@@ -2,7 +2,7 @@
 {{- if .Values.global.gerrit.administrators -}}
 {{- range .Values.global.gerrit.administrators }}
 ---
-apiVersion: v2.edp.epam.com/v1alpha1
+apiVersion: v2.edp.epam.com/v1
 kind: GerritGroupMember
 metadata:
   name: {{ lower (split "@" ( . | replace "\"" "" | replace "_" "-" | replace ":" "-" ))._0 }}-admin
