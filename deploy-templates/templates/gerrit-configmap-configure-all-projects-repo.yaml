@@ -47,6 +47,7 @@ data:
     checkFastForwardGerrit "project.config" "pushMerge = group Administrators" 0 "access \"refs/for/refs/*\""
     checkFastForwardGerrit "project.config" "mergeContent = false" 1 "submit"
     checkFastForwardGerrit "project.config" "action = fast forward only" 2 "submit"
+    checkFastForwardGerrit "project.config" "addPatchSet = group Administrators" 2 "access \"refs/*\""
 
     if ${isConfigChanged}; then
       git add . && git commit -a -m "Updated Gerrit config" && git push origin HEAD:refs/meta/config
