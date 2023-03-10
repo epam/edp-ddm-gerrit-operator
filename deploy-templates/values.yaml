@@ -40,6 +40,11 @@ keycloak:
   host: platform-keycloak:8080
 image:
   version: 1.1.1-1
+
+edpComponent:
+  description: "Програмний інструмент, що дозволяє керувати версіями компонентів та конфігурацій."
+  displayName: "Сервіс інспекції та зберігання змін регламенту (Gerrit)."
+  operationalZone: "registry-administration-zone"
 dnsWildcard: mdtu-ddm.edp.epam.com
 edpProject: mdtu-ddm-edp-cicd
 namespace: ns
