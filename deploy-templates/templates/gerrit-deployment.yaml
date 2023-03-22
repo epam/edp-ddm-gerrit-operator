@@ -21,6 +21,7 @@ spec:
         sidecar.istio.io/inject: "false"
       labels:
         app: {{ .Values.gerrit.name }}
+        collect.logs: "plain-text"
     spec:
       volumes:
         - name: {{ .Values.gerrit.name }}-data
