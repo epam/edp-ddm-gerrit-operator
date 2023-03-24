@@ -1,7 +1,7 @@
 name: gerrit-operator
 operator:
   image:
-    name: mdtu-ddm-edp-cicd/gerrit-operator
+    name: control-plane/gerrit-operator
     version: 2.12.0-SNAPSHOT.1-1668595949
   serviceAccountName: gerrit-operator
   clusterRoleName: gerrit-operator-role-mdtu-ddm-edp-cicd
