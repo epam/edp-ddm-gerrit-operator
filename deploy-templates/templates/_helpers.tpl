@@ -108,14 +108,14 @@ haproxy.router.openshift.io/ip_whitelist: {{ (include "admin-routes.whitelist.ci
 If condition is required to save old CI git user name for existing envs till 1.9.4.
 Since new user name is forced by upgrade gerrit-operator to v2.13.5
 */}}
-{{- define "gerrit.gitUser"}}
+{{- define "gerrit.gitUser" }}
 {{- $gitServer := (lookup "v2.edp.epam.com/v1alpha1" "GitServer" .Release.Namespace "gerrit") -}}
 {{- if $gitServer }}
-{{- printf "%s" "jenkins" }}
-{{- else }}
-{{- printf "%s" "edp-ci" }}
-{{- end }}
-{{- end }}
+{{- $gitServer.spec.gitUser }}
+{{ else -}}
+edp-ci
+{{- end -}}
+{{ end -}}
 
 {{/*
 Redis
