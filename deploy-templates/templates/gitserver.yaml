@@ -7,7 +7,6 @@ metadata:
 spec:
   gitHost: gerrit
   gitUser: {{ include "gerrit.gitUser" . }}
-  gitProvider: gerrit
   httpsPort: 8080
   nameSshKeySecret: gerrit-ciuser-sshkey
   sshPort: {{ .Values.gerrit.sshPort }}
